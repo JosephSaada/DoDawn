@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do List Application</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>DoDawn</h1>
+    </header>
+    <main>
+        <section id="userForms">
+            <form id="loginForm">
+                <input type="email" placeholder="Enter your email" required>
+                <input type="password" placeholder="Password" required>
+                <button type="submit">Log In</button>
+            </form>
+            <form id="registerForm">
+                <input type="text" placeholder="Full Name" required>
+                <input type="email" placeholder="Email" required>
+                <input type="password" placeholder="Create Password" required>
+                <button type="submit">Register</button>
+            </form>
+        </section>
+        <section id="taskManager">
+            <ul id="taskList"></ul>
+            <form id="addTaskForm">
+                <input type="text" id="taskInput" placeholder="Add a new task" required>
+                <select id="assigneeSelect">
+                    <option value="Alice">Alice</option>
+                    <option value="Bob">Bob</option>
+                    <option value="Charlie">Charlie</option>
+                    <option value="Dana">Dana</option>
+                </select>
+                <select id="prioritySelect">
+                    <option value="low">Low</option>
+                    <option value="medium">Medium</option>
+                    <option value="high">High</option>
+                </select>
+                <input type="hidden" id="editingId" value=""> <!-- Hidden field for storing task ID when editing -->
+                <button type="submit" id="submitButton">Add Task</button>
+            </form>
+        </section>
+    </main>
+    <script src="scripts.js"></script>
+</body>
+</html>
