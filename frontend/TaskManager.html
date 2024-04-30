@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Manager - To-Do List Application</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Task Manager</h1>
+    </header>
+    <main>
+        <ul id="taskList"></ul>
+        <form id="addTaskForm">
+            <input type="text" id="taskInput" placeholder="Add a new task" required>
+            <select id="assigneeSelect">
+                <option value="Alice">Alice</option>
+                <option value="Bob">Bob</option>
+                <option value="Charlie">Charlie</option>
+                <option value="Dana">Dana</option>
+            </select>
+            <select id="prioritySelect">
+                <option value="low">Low</option>
+                <option value="medium">Medium</option>
+                <option value="high">High</option>
+            </select>
+            <input type="hidden" id="editingId" value="">
+            <button type="submit" id="submitButton">Add Task</button>
+        </form>
+    </main>
+    <script src="scripts.js"></script>
+</body>
+</html>
