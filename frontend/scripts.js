@@ -1,84 +1,67 @@
-document.getElementById('loginForm').addEventListener('submit', function(event) {
-    event.preventDefault();
-    // Login logic here
-    alert('Logged in (simulation)');
-});
-
-document.getElementById('registerForm').addEventListener('submit', function(event) {
-    event.preventDefault();
-    // Registration logic here
-    alert('Registered (simulation)');
-});
-
-document.getElementById('addTaskForm').addEventListener('submit', function(event) {
-    event.preventDefault();
-    const taskInput = document.querySelector('#addTaskForm input[type="text"]');
-    const priority = document.querySelector('#prioritySelect').value;
-    const assignee = document.querySelector('#assigneeSelect').value;
-
-    addTask(taskInput.value, assignee, priority);
-    taskInput.value = ''; // Clear input after adding
-});
-
-document.getElementById('taskForm').addEventListener('submit', function(event) {
-    event.preventDefault();
-    const taskInput = document.getElementById('taskInput');
-    const priority = document.getElementById('prioritySelect').value;
-    const assignee = document.getElementById('assigneeSelect').value;
-    const editingId = document.getElementById('editingId').value;
-
-    if (editingId) {
-        updateTask(editingId, taskInput.value, assignee, priority);
-    } else {
-        addTask(taskInput.value, assignee, priority);
+document.addEventListener('DOMContentLoaded', function() {
+    // Event listener for login form
+    if (document.getElementById('loginForm')) {
+        document.getElementById('loginForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            alert('Logged in (simulation)');
+        });
     }
-    taskInput.value = ''; // Clear input after adding or editing
-    document.getElementById('editingId').value = ''; // Clear the editing ID
-    document.getElementById('submitButton').textContent = 'Add Task'; // Reset button to 'Add Task'
+
+    // Event listener for register form
+    if (document.getElementById('registerForm')) {
+        document.getElementById('registerForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            alert('Registered (simulation)');
+        });
+    }
+
+    // Event listener for add task form
+    if (document.getElementById('addTaskForm')) {
+        document.getElementById('addTaskForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const taskInput = document.getElementById('taskInput');
+            const priority = document.getElementById('prioritySelect').value;
+            const assignee = document.getElementById('assigneeSelect').value;
+            addTask(taskInput.value, assignee, priority);
+            taskInput.value = ''; // Clear input after adding
+        });
+    }
 });
 
+// Define your functions outside the DOMContentLoaded if they are used across multiple pages
 function addTask(description, assignee, priority) {
-    const taskItem = document.createElement('li');
-    const taskId = Date.now().toString(); // Generate a unique ID for each task
-    taskItem.setAttribute('id', taskId);
-    taskItem.textContent = `${description} - Assigned to: ${assignee} - Priority: ${priority}`;
+    const taskList = document.getElementById('taskList');
+    if (taskList) {
+        const taskItem = document.createElement('li');
+        const taskId = Date.now().toString(); // Generate a unique ID for each task
+        taskItem.setAttribute('id', taskId);
+        taskItem.textContent = `${description} - Assigned to: ${assignee} - Priority: ${priority}`;
 
-    const editButton = document.createElement('button');
-    editButton.textContent = 'Edit';
-    editButton.onclick = function() {
-        prepareEditTask(taskId);
-    };
+        const editButton = document.createElement('button');
+        editButton.textContent = 'Edit';
+        editButton.onclick = function() {
+            prepareEditTask(taskId);
+        };
 
-    const deleteButton = document.createElement('button');
-    deleteButton.textContent = 'Delete';
-    deleteButton.onclick = function() {
-        deleteTask(taskId);
-    };
+        const deleteButton = document.createElement('button');
+        deleteButton.textContent = 'Delete';
+        deleteButton.onclick = function() {
+            deleteTask(taskId);
+        };
 
-    taskItem.appendChild(editButton);
-    taskItem.appendChild(deleteButton);
+        taskItem.appendChild(editButton);
+        taskItem.appendChild(deleteButton);
 
-    document.getElementById('taskList').appendChild(taskItem);
-    notify(assignee, description);
+        taskList.appendChild(taskItem);
+    } else {
+        alert('Task list not found on this page.');
+    }
 }
 
-function updateTask(id, description, assignee, priority) {
+function deleteTask(id) {
     const taskItem = document.getElementById(id);
-    taskItem.textContent = `${description} - Assigned to: ${assignee} - Priority: ${priority}`;
-    // Re-add edit and delete buttons after updating text
-    taskItem.appendChild(taskItem.querySelector('button'));
-    taskItem.appendChild(taskItem.querySelector('button'));
-}
-
-
-function editTask(taskItem, description, assignee, priority) {
-    const newDesc = prompt("Edit your task description:", description);
-    const newAssignee = prompt("Edit your assignee:", assignee);
-    const newPriority = prompt("Edit your priority:", priority);
-    if (newDesc && newAssignee && newPriority) {
-        taskItem.textContent = `${newDesc} - Assigned to: ${newAssignee} - Priority: ${newPriority}`;
-        taskItem.appendChild(taskItem.querySelector('button')); // Re-add edit button
-        taskItem.appendChild(taskItem.querySelector('button')); // Re-add delete button
+    if (taskItem) {
+        taskItem.parentNode.removeChild(taskItem);
     }
 }
 
