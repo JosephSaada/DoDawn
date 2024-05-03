@@ -10,9 +10,10 @@
     <header>
         <h1 onclick="window.location.href = 'index.html'">Task Manager</h1>
     </header>
-    <main>
-        <ul id="taskList"></ul>
-        <form id="addTaskForm">
+    <main> 
+
+        <form id="addTaskForm"> 
+            
             <input type="text" id="taskInput" placeholder="Add a new task" required>
             <select id="assigneeSelect">
                 <option value="Alice">Alice</option>
@@ -27,7 +28,12 @@
             </select>
             <input type="hidden" id="editingId" value="">
             <button type="submit" id="submitButton">Add Task</button>
-        </form>
+        </form>  
+    <select id="sortSelect">
+        <option value="priority-asc">Sort by Priority (Ascending)</option>
+        <option value="priority-desc">Sort by Priority (Descending)</option>
+    </select>
+        <ul id="taskList"></ul>
     </main>
     <script src="scripts.js"></script>
 </body>

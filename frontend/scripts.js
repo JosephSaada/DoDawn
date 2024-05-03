@@ -16,7 +16,18 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             taskInput.value = ''; // Clear input after adding or editing
             document.getElementById('editingId').value = ''; // Clear the editing ID
-            document.getElementById('submitButton').textContent = 'Add Task'; // Reset button to 'Add Task'
+            document.getElementById('submitButton').textContent = 'Add Task'; // Reset button to 'Add Task' 
+
+        });
+    }
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Event listener for sort selection change
+    const sortSelect = document.getElementById('sortSelect');
+    if (sortSelect) {
+        sortSelect.addEventListener('change', function() {
+            sortTasks(this.value);
         });
     }
 });
@@ -79,4 +90,41 @@ function deleteTask(id) {
     if (taskItem) {
         taskItem.parentNode.removeChild(taskItem);
     }
+}
+
+function sortTasks(sortBy) {
+    let tasks = Array.from(document.getElementById('taskList').children);
+    console.log('Initial tasks:', tasks.map(t => t.textContent));
+
+    // Adjust priorities to be in lowercase for case-insensitive comparison
+    let priorities = ['low', 'medium', 'high'];
+
+    tasks.sort((a, b) => {
+        let aText = a.textContent.split('Edit')[0].trim();
+        let bText = b.textContent.split('Edit')[0].trim();
+        console.log('Parsed text A:', aText);
+        console.log('Parsed text B:', bText);
+
+        if (sortBy === 'priority-desc' || sortBy === 'priority-asc') {
+            // Convert priority text extracted from the task to lowercase before finding the index
+            let aPriorityIndex = priorities.indexOf(aText.split(' - Priority: ')[1].toLowerCase());
+            let bPriorityIndex = priorities.indexOf(bText.split(' - Priority: ')[1].toLowerCase());
+            console.log('Priority A:', aPriorityIndex, 'Priority B:', bPriorityIndex);
+
+            if (sortBy === 'priority-desc') {
+                console.log('Descending comparison result:', bPriorityIndex - aPriorityIndex);
+                return bPriorityIndex - aPriorityIndex;
+            } else {
+                console.log('Ascending comparison result:', aPriorityIndex - bPriorityIndex);
+                return aPriorityIndex - bPriorityIndex;
+            }
+        }
+    });
+
+    console.log('Sorted tasks:', tasks.map(t => t.textContent));
+    document.getElementById('taskList').innerHTML = '';
+    tasks.forEach(task => {
+        document.getElementById('taskList').appendChild(task);
+        console.log('Appended task:', task.textContent);
+    });
 }
