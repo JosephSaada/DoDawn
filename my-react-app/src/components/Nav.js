@@ -8,6 +8,7 @@ function Nav() {
         <li><Link to="/login">Login</Link></li>
         <li><Link to="/register">Register</Link></li>
         <li><Link to="/task-manager">Manage Tasks</Link></li>
+        <li><Link to="/user-tasks">User Tasks</Link></li>
       </ul>
     </nav>
   );

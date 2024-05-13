@@ -1,45 +1,29 @@
 import React, { useState } from 'react';
 
-function TaskManager() {
-  const [tasks, setTasks] = useState([]);
+function TaskManager({ tasks, addTask, updateTask }) {
   const [taskInput, setTaskInput] = useState('');
   const [priority, setPriority] = useState('low');
   const [assignee, setAssignee] = useState('Alice');
+  const [status, setStatus] = useState('To Do');
   const [editingId, setEditingId] = useState('');
   const [sortOrder, setSortOrder] = useState('priority-asc');
 
   const handleAddOrEditTask = (event) => {
     event.preventDefault();
     if (editingId) {
-      updateTask(editingId, taskInput, assignee, priority);
+      updateTask({ id: editingId, description: taskInput, assignee, priority, status });
     } else {
-      addTask(taskInput, assignee, priority);
+      addTask({ id: Date.now().toString(), description: taskInput, assignee, priority, status });
     }
     setTaskInput('');
     setEditingId('');
-  };
-
-  const addTask = (description, assignee, priority) => {
-    const newTask = { id: Date.now().toString(), description, assignee, priority };
-    setTasks([...tasks, newTask]);
-  };
-
-  const updateTask = (id, description, assignee, priority) => {
-    const updatedTasks = tasks.map(task =>
-      task.id === id ? { ...task, description, assignee, priority } : task
-    );
-    setTasks(updatedTasks);
-  };
-
-  const deleteTask = (id) => {
-    const updatedTasks = tasks.filter(task => task.id !== id);
-    setTasks(updatedTasks);
   };
 
   const prepareEditTask = (task) => {
     setTaskInput(task.description);
     setAssignee(task.assignee);
     setPriority(task.priority);
+    setStatus(task.status);
     setEditingId(task.id);
   };
 
@@ -52,8 +36,17 @@ function TaskManager() {
       }
       return 0;
     });
-    setTasks(sortedTasks);
+    return sortedTasks;
   };
+
+  const updateTaskStatus = (id, newStatus) => {
+    const updatedTasks = tasks.map(task =>
+      task.id === id ? { ...task, status: newStatus } : task
+    );
+    updatedTasks.forEach(updatedTask => updateTask(updatedTask));
+  };
+
+  const sortedTasks = sortTasks(sortOrder);
 
   return (
     <main>
@@ -76,19 +69,29 @@ function TaskManager() {
           <option value="medium">Medium</option>
           <option value="high">High</option>
         </select>
+        <select value={status} onChange={(e) => setStatus(e.target.value)}>
+          <option value="To Do">To Do</option>
+          <option value="In Progress">In Progress</option>
+          <option value="Done">Done</option>
+        </select>
         <input type="hidden" value={editingId} />
         <button type="submit">{editingId ? 'Edit Task' : 'Add Task'}</button>
       </form>
-      <select onChange={(e) => sortTasks(e.target.value)} value={sortOrder}>
+      <select onChange={(e) => setSortOrder(e.target.value)} value={sortOrder}>
         <option value="priority-asc">Sort by Priority (Ascending)</option>
         <option value="priority-desc">Sort by Priority (Descending)</option>
       </select>
       <ul>
-        {tasks.map(task => (
-          <li key={task.id}>
-            {task.description} - Assigned to: {task.assignee} - Priority: {task.priority}
+        {sortedTasks.map(task => (
+          <li key={task.id} style={{ textDecoration: task.status === 'Done' ? 'line-through' : 'none' }}>
+            {task.description} - Assigned to: {task.assignee} - Priority: {task.priority} - Status: {task.status}
+            <select value={task.status} onChange={(e) => updateTaskStatus(task.id, e.target.value)}>
+              <option value="To Do">To Do</option>
+              <option value="In Progress">In Progress</option>
+              <option value="Done">Done</option>
+            </select>
             <button onClick={() => prepareEditTask(task)}>Edit</button>
-            <button onClick={() => deleteTask(task.id)}>Delete</button>
+            <button onClick={() => updateTask(tasks.filter(t => t.id !== task.id))}>Delete</button>
           </li>
         ))}
       </ul>

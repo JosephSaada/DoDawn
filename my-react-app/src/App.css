@@ -43,3 +43,8 @@ button:hover {
   list-style-type: none;
   border: 1px solid #ccc;
 }
+
+#taskList li.completed {
+  text-decoration: line-through;
+  color: #888;
+}
