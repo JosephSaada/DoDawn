@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-function TaskManager({ tasks, addTask, updateTask }) {
+function TaskManager({ tasks, addTask, updateTask, deleteTask }) {
   const [taskInput, setTaskInput] = useState('');
   const [priority, setPriority] = useState('low');
   const [assignee, setAssignee] = useState('Alice');
@@ -91,7 +91,7 @@ function TaskManager({ tasks, addTask, updateTask }) {
               <option value="Done">Done</option>
             </select>
             <button onClick={() => prepareEditTask(task)}>Edit</button>
-            <button onClick={() => updateTask(tasks.filter(t => t.id !== task.id))}>Delete</button>
+            <button onClick={() => deleteTask(task.id)}>Delete</button>
           </li>
         ))}
       </ul>

@@ -23,6 +23,11 @@ function App() {
     setTasks(updatedTasks);
   };
 
+  const deleteTask = (id) => {
+    const updatedTasks = tasks.filter(task => task.id !== id);
+    setTasks(updatedTasks);
+  };
+
   return (
     <Router>
       <div className="App">
@@ -32,7 +37,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/task-manager" element={<TaskManager tasks={tasks} addTask={addTask} updateTask={updateTask} />} />
+          <Route path="/task-manager" element={<TaskManager tasks={tasks} addTask={addTask} updateTask={updateTask} deleteTask={deleteTask} />} />
           <Route path="/user-tasks" element={<UserTasks tasks={tasks} />} />
         </Routes>
       </div>
