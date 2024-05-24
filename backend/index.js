@@ -34,11 +34,13 @@ const Task = mongoose.model('Task', taskSchema);
 app.post('/register', async (req, res) => {
   try {
     const { name, email, password } = req.body;
+    console.log("Register endpoint received data:", { name, email, password }); // Debug log
     const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = new User({ name, email, password: hashedPassword });
     await newUser.save();
     res.status(201).json({ message: 'User registered successfully' });
   } catch (error) {
+    console.error("Error during registration:", error); // Debug log
     res.status(400).json({ error: error.message });
   }
 });
@@ -47,6 +49,7 @@ app.post('/register', async (req, res) => {
 app.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
+    console.log("Login endpoint received data:", { email, password }); // Debug log
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(400).json({ message: 'User not found' });
@@ -57,6 +60,7 @@ app.post('/login', async (req, res) => {
     }
     res.status(200).json({ message: 'Login successful', userId: user._id });
   } catch (error) {
+    console.error("Error during login:", error); // Debug log
     res.status(500).json({ error: error.message });
   }
 });
@@ -67,6 +71,7 @@ app.get('/users', async (req, res) => {
     const users = await User.find();
     res.status(200).json(users);
   } catch (error) {
+    console.error("Error fetching users:", error); // Debug log
     res.status(500).json({ error: error.message });
   }
 });
@@ -77,6 +82,7 @@ app.get('/tasks', async (req, res) => {
     const tasks = await Task.find({});
     res.status(200).json(tasks);
   } catch (error) {
+    console.error("Error fetching tasks:", error); // Debug log
     res.status(500).json({ error: error.message });
   }
 });
@@ -89,6 +95,7 @@ app.post('/tasks', async (req, res) => {
     await newTask.save();
     res.status(201).json(newTask);
   } catch (error) {
+    console.error("Error adding task:", error); // Debug log
     res.status(400).json({ error: error.message });
   }
 });
@@ -100,6 +107,7 @@ app.put('/tasks/:id', async (req, res) => {
     const updatedTask = await Task.findByIdAndUpdate(id, req.body, { new: true });
     res.status(200).json(updatedTask);
   } catch (error) {
+    console.error("Error updating task:", error); // Debug log
     res.status(400).json({ error: error.message });
   }
 });
@@ -111,6 +119,7 @@ app.delete('/tasks/:id', async (req, res) => {
     await Task.findByIdAndDelete(id);
     res.status(200).json({ message: 'Task deleted successfully' });
   } catch (error) {
+    console.error("Error deleting task:", error); // Debug log
     res.status(400).json({ error: error.message });
   }
 });
