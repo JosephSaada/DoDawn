@@ -1,11 +1,16 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
+const cors = require('cors');
 const app = express();
 
 app.use(express.json());
+app.use(cors());
 
-mongoose.connect('mongodb://localhost:27017/DoDawn');
+mongoose.connect('mongodb://localhost:27017/DoDawn', {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+});
 
 const userSchema = new mongoose.Schema({
   name: String,
@@ -25,6 +30,7 @@ const taskSchema = new mongoose.Schema({
 
 const Task = mongoose.model('Task', taskSchema);
 
+// Register endpoint
 app.post('/register', async (req, res) => {
   try {
     const { name, email, password } = req.body;
@@ -37,6 +43,7 @@ app.post('/register', async (req, res) => {
   }
 });
 
+// Login endpoint
 app.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -54,6 +61,17 @@ app.post('/login', async (req, res) => {
   }
 });
 
+// Get all registered users
+app.get('/users', async (req, res) => {
+  try {
+    const users = await User.find();
+    res.status(200).json(users);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Get all tasks
 app.get('/tasks', async (req, res) => {
   try {
     const tasks = await Task.find({});
@@ -63,6 +81,7 @@ app.get('/tasks', async (req, res) => {
   }
 });
 
+// Add a new task
 app.post('/tasks', async (req, res) => {
   try {
     const { description, assignee, priority, status, userId } = req.body;
@@ -74,6 +93,7 @@ app.post('/tasks', async (req, res) => {
   }
 });
 
+// Update a task
 app.put('/tasks/:id', async (req, res) => {
   try {
     const { id } = req.params;
@@ -84,6 +104,7 @@ app.put('/tasks/:id', async (req, res) => {
   }
 });
 
+// Delete a task
 app.delete('/tasks/:id', async (req, res) => {
   try {
     const { id } = req.params;
@@ -94,7 +115,7 @@ app.delete('/tasks/:id', async (req, res) => {
   }
 });
 
-const PORT = process.env.PORT || 3001; // Changed port number to 3001
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Server is listening on port ${PORT}`);
 });
