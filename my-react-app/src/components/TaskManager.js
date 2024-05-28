@@ -88,10 +88,13 @@ function TaskManager({ tasks: initialTasks, addTask, updateTask, deleteTask }) {
       </select>
       <ul style={{ listStyleType: 'none', padding: 0, width: '100%', marginTop: '20px' }}>
         {sortedTasks.map(task => (
-          <li key={task.id} style={{ textDecoration: task.status === 'Done' ? 'line-through' : 'none', padding: '10px 0' }}>
-            {task.description} - Assigned to: {task.assignee} - Priority: {task.priority} - Status: {task.status}
+          <li key={task.id} style={{ padding: '10px', marginBottom: '10px', border: '1px solid #ccc', borderRadius: '4px', backgroundColor: '#f9f9f9', textAlign: 'center', textDecoration: task.status === 'Done' ? 'line-through' : 'none' }}>
+            <p>{task.description}</p>
+            <p>Assigned to: {task.assignee}</p>
+            <p>Priority: {task.priority}</p>
+            <p>Status: {task.status}</p>
             <div>
-              <button onClick={() => prepareEditTask(task)} style={{ margin: '5px', padding: '5px 10px', backgroundColor: 'blue', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>Edit</button>
+              <button onClick={() => prepareEditTask(task)} style={{ margin: '5px', padding: '5px 10px', backgroundColor: 'green', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>Edit</button>
               <button onClick={() => deleteTask(task.id)} style={{ margin: '5px', padding: '5px 10px', backgroundColor: 'red', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>Delete</button>
             </div>
           </li>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './components/AuthContext';
 import Header from './components/Header';
@@ -9,8 +9,6 @@ import Register from './components/Register';
 import TaskManager from './components/TaskManager';
 import UserTasks from './components/UserTasks';
 import './App.css';
-
-//LOOK FOR THIS COMMENT
 
 function App() {
   return (
@@ -28,6 +26,19 @@ function App() {
 
 function AppRoutes() {
   const { isAuthenticated } = useAuth();
+  const [tasks, setTasks] = useState([]);
+
+  const addTask = (newTask) => {
+    setTasks([...tasks, newTask]);
+  };
+
+  const updateTask = (updatedTask) => {
+    setTasks(tasks.map(task => task.id === updatedTask.id ? updatedTask : task));
+  };
+
+  const deleteTask = (taskId) => {
+    setTasks(tasks.filter(task => task.id !== taskId));
+  };
 
   return (
     <Routes>
@@ -42,8 +53,8 @@ function AppRoutes() {
         </>
       ) : (
         <>
-          <Route path="/task-manager" element={<TaskManager />} />
-          <Route path="/user-tasks" element={<UserTasks />} />
+          <Route path="/task-manager" element={<TaskManager tasks={tasks} addTask={addTask} updateTask={updateTask} deleteTask={deleteTask} />} />
+          <Route path="/user-tasks" element={<UserTasks tasks={tasks} />} />
           {/* Redirect if trying to access login or register while authenticated */}
           <Route path="/login" element={<Navigate replace to="/" />} />
           <Route path="/register" element={<Navigate replace to="/" />} />
