@@ -1,20 +1,19 @@
 import React, { useState, useEffect } from 'react';
+import { fetchTasks } from '../api'; // Adjust the import path as necessary
 
-function UserTasks({ tasks }) {
+function UserTasks() {
   const [selectedUser, setSelectedUser] = useState('Alice');
-  const [localTasks, setLocalTasks] = useState([]);
+  const [tasks, setTasks] = useState([]);
 
   useEffect(() => {
-    // Simulating fetching tasks or ensure tasks are loaded
-    if (tasks) {
-      setLocalTasks(tasks);
-    } else {
-      // Optionally, fetch tasks from a server or handle empty state
-      setLocalTasks([]); // set to empty array if tasks is undefined to avoid errors
-    }
-  }, [tasks]);
+    const loadTasks = async () => {
+      const fetchedTasks = await fetchTasks();
+      setTasks(fetchedTasks);
+    };
+    loadTasks();
+  }, []);
 
-  const filteredTasks = localTasks.filter(task => task.assignee === selectedUser);
+  const filteredTasks = tasks.filter(task => task.assignee === selectedUser);
 
   return (
     <div style={{ maxWidth: '800px', margin: 'auto', padding: '20px', textAlign: 'center' }}>
@@ -31,7 +30,7 @@ function UserTasks({ tasks }) {
       </select>
       <ul style={{ listStyleType: 'none', padding: 0 }}>
         {filteredTasks.map(task => (
-          <li key={task.id} style={{ textDecoration: task.status === 'Done' ? 'line-through' : 'none', padding: '10px 0' }}>
+          <li key={task._id} style={{ textDecoration: task.status === 'Done' ? 'line-through' : 'none', padding: '10px 0' }}>
             {task.description} - Priority: {task.priority} - Status: {task.status}
           </li>
         ))}

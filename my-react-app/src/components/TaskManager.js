@@ -1,7 +1,9 @@
+// src/components/TaskManager.js
 import React, { useState, useEffect } from 'react';
+import { fetchTasks, addTask, updateTask, deleteTask } from '../api';
 
-function TaskManager({ tasks: initialTasks, addTask, updateTask, deleteTask }) {
-  const [tasks, setTasks] = useState(initialTasks || []);
+function TaskManager() {
+  const [tasks, setTasks] = useState([]);
   const [taskInput, setTaskInput] = useState('');
   const [priority, setPriority] = useState('low');
   const [assignee, setAssignee] = useState('Alice');
@@ -10,15 +12,16 @@ function TaskManager({ tasks: initialTasks, addTask, updateTask, deleteTask }) {
   const [sortOrder, setSortOrder] = useState('priority-asc');
 
   useEffect(() => {
-    if (initialTasks) {
-      setTasks(initialTasks);
-    }
-  }, [initialTasks]);
+    const loadTasks = async () => {
+      const fetchedTasks = await fetchTasks();
+      setTasks(fetchedTasks);
+    };
+    loadTasks();
+  }, []);
 
-  const handleAddOrEditTask = (event) => {
+  const handleAddOrEditTask = async (event) => {
     event.preventDefault();
     const newTask = {
-      id: editingId || Date.now().toString(),
       description: taskInput,
       assignee,
       priority,
@@ -26,9 +29,11 @@ function TaskManager({ tasks: initialTasks, addTask, updateTask, deleteTask }) {
     };
 
     if (editingId) {
-      updateTask(newTask);
+      const updatedTask = await updateTask(editingId, newTask);
+      setTasks(tasks.map(task => task._id === updatedTask._id ? updatedTask : task));
     } else {
-      addTask(newTask);
+      const addedTask = await addTask(newTask);
+      setTasks([...tasks, addedTask]);
     }
 
     setTaskInput('');
@@ -40,7 +45,12 @@ function TaskManager({ tasks: initialTasks, addTask, updateTask, deleteTask }) {
     setAssignee(task.assignee);
     setPriority(task.priority);
     setStatus(task.status);
-    setEditingId(task.id);
+    setEditingId(task._id);
+  };
+
+  const handleDeleteTask = async (taskId) => {
+    await deleteTask(taskId);
+    setTasks(tasks.filter(task => task._id !== taskId));
   };
 
   const sortTasks = (order) => {
@@ -88,14 +98,14 @@ function TaskManager({ tasks: initialTasks, addTask, updateTask, deleteTask }) {
       </select>
       <ul style={{ listStyleType: 'none', padding: 0, width: '100%', marginTop: '20px' }}>
         {sortedTasks.map(task => (
-          <li key={task.id} style={{ padding: '10px', marginBottom: '10px', border: '1px solid #ccc', borderRadius: '4px', backgroundColor: '#f9f9f9', textAlign: 'center', textDecoration: task.status === 'Done' ? 'line-through' : 'none' }}>
+          <li key={task._id} style={{ padding: '10px', marginBottom: '10px', border: '1px solid #ccc', borderRadius: '4px', backgroundColor: '#f9f9f9', textAlign: 'center', textDecoration: task.status === 'Done' ? 'line-through' : 'none' }}>
             <p>{task.description}</p>
             <p>Assigned to: {task.assignee}</p>
             <p>Priority: {task.priority}</p>
             <p>Status: {task.status}</p>
             <div>
               <button onClick={() => prepareEditTask(task)} style={{ margin: '5px', padding: '5px 10px', backgroundColor: 'green', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>Edit</button>
-              <button onClick={() => deleteTask(task.id)} style={{ margin: '5px', padding: '5px 10px', backgroundColor: 'red', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>Delete</button>
+              <button onClick={() => handleDeleteTask(task._id)} style={{ margin: '5px', padding: '5px 10px', backgroundColor: 'red', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>Delete</button>
             </div>
           </li>
         ))}

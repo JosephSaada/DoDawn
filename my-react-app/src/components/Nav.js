@@ -1,14 +1,13 @@
-// Nav.js
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from './AuthContext'; // Make sure the path is correct based on your structure
 
 function Nav() {
-    const { isAuthenticated } = useAuth();
+    const { isAuthenticated, logout } = useAuth();
 
     return (
         <nav style={{ backgroundColor: '#4285F4', padding: '10px 0', display: 'flex', justifyContent: 'center' }}>
-            <ul style={{ listStyle: 'none', padding: 0, display: 'flex', gap: '10px' }}>
+            <ul style={{ listStyle: 'none', padding: 0, display: 'flex', gap: '10px', alignItems: 'center' }}>
                 {!isAuthenticated && (
                     <>
                         <li>
@@ -78,6 +77,24 @@ function Nav() {
                             >
                                 User Tasks
                             </Link>
+                        </li>
+                        <li>
+                            <button 
+                                onClick={logout}
+                                className="nav-button"
+                                style={{ 
+                                    color: 'white', 
+                                    padding: '10px 20px', 
+                                    textDecoration: 'none', 
+                                    borderRadius: '4px',
+                                    textAlign: 'center',
+                                    backgroundColor: '#4285F4',
+                                    border: 'none',
+                                    cursor: 'pointer'
+                                }}
+                            >
+                                Logout
+                            </button>
                         </li>
                     </>
                 )}
