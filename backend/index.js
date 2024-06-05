@@ -30,33 +30,27 @@ const taskSchema = new mongoose.Schema({
 
 const Task = mongoose.model('Task', taskSchema);
 
-// Register endpoint
-app.post('/register', async (req, res) => {
-  try {
-    const { name, email, password } = req.body;
-    console.log("Register endpoint received data:", { name, email, password }); // Debug log
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = new User({ name, email, password: hashedPassword });
-    await newUser.save();
-    res.status(201).json({ message: 'User registered successfully' });
-  } catch (error) {
-    console.error("Error during registration:", error); // Debug log
-    res.status(400).json({ error: error.message });
-  }
-});
 
-// Login endpoint
+// This API endpoint handles user login by receiving login credentials through a POST request to /login
 app.post('/login', async (req, res) => {
+
+ // retrieves the user from the database using the provided email, and checks if the user exists
   try {
+    //It logs the received data for debuggin
     const { email, password } = req.body;
-    console.log("Login endpoint received data:", { email, password }); // Debug log
-    const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(400).json({ message: 'User not found' });
-    }
+     // retrieves the user from the database using the provided email
+    
+     console.log("Login endpoint received data:", { email, password }); // Debug log
+   
+     const user = await User.findOne({ email });
+    //Checking if user does not exists \
+     if (!user) {return res.status(400).json({ message: 'User not found' });}
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
+
+      //checikng if it is invalid password
       return res.status(400).json({ message: 'Invalid password' });
+
     }
     res.status(200).json({ message: 'Login successful', userId: user._id });
   } catch (error) {
@@ -65,38 +59,89 @@ app.post('/login', async (req, res) => {
   }
 });
 
-// Get all registered users
-app.get('/users', async (req, res) => {
+// Register endpoint
+//This API endpoint handles user registration by receiving user details 
+//through a POST request to /register.
+// It logs the received data for debugging, hashes the user's password using bcrypt,
+// and creates a new user object. 
+//The new user is then saved to the database, and upon success, 
+//a 201 status code with a success message is returned.
+// If an error occurs, it logs the error and returns a 400 status code
+app.post('/register', async (req, res) => {
+
+  //This API endpoint handles user registration by receiving user details 
   try {
-    const users = await User.find();
-    res.status(200).json(users);
+
+    const { name, email, password } = req.body;
+
+    console.log("Register endpoint received data:", { name, email, password }); 
+    
+    //hashes the user's password using bcrypt
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const newUser = new User({ name, email, password: hashedPassword });
+    await newUser.save();
+    //Good request
+    res.status(201).json({ message: 'User registered successfully' });
+
   } catch (error) {
-    console.error("Error fetching users:", error); // Debug log
-    res.status(500).json({ error: error.message });
+
+    console.error("Error during registration:", error); 
+
+    res.status(400).json({ error: error.message });
   }
 });
 
-// Get all tasks
-app.get('/tasks', async (req, res) => {
-  try {
-    const tasks = await Task.find({});
-    res.status(200).json(tasks);
-  } catch (error) {
-    console.error("Error fetching tasks:", error); // Debug log
-    res.status(500).json({ error: error.message });
-  }
-});
-
-// Add a new task
+//This api add a new task to the database
 app.post('/tasks', async (req, res) => {
   try {
+
+    //Processing 
     const { description, assignee, priority, status, userId } = req.body;
     const newTask = new Task({ description, assignee, priority, status, userId });
+    //Saving the data
     await newTask.save();
+
     res.status(201).json(newTask);
+
   } catch (error) {
-    console.error("Error adding task:", error); // Debug log
+    //Error checking
+    console.error("Error adding task:", error); 
+
     res.status(400).json({ error: error.message });
+  }
+});
+
+
+// This Api gets  all registered users from the database
+app.get('/users', async (req, res) => {
+  try {
+    //processing 
+    const users = await User.find();
+
+    res.status(200).json(users);
+
+  } catch (error) {
+
+    console.error("Error fetching users:", error); 
+
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// This api get all tasks from the database
+app.get('/tasks', async (req, res) => {
+  try {
+    //Processing and returning the appropriate status
+    const tasks = await Task.find({});
+
+    res.status(200).json(tasks);
+
+  } catch (error) {
+
+    console.error("Error fetching tasks:", error); 
+
+    res.status(500).json({ error: error.message });
   }
 });
 
@@ -112,19 +157,25 @@ app.put('/tasks/:id', async (req, res) => {
   }
 });
 
-// Delete a task
+// This api delete or removes a specific task using the id
 app.delete('/tasks/:id', async (req, res) => {
+  //Processing 
   try {
     const { id } = req.params;
+    //Deleting
     await Task.findByIdAndDelete(id);
+
     res.status(200).json({ message: 'Task deleted successfully' });
+
   } catch (error) {
-    console.error("Error deleting task:", error); // Debug log
+    console.error("Error deleting task:", error); 
     res.status(400).json({ error: error.message });
   }
 });
 
 const PORT = process.env.PORT || 3001;
+
 app.listen(PORT, () => {
+  
   console.log(`Server is listening on port ${PORT}`);
 });
